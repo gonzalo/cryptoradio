@@ -1,0 +1,11 @@
+[Encryption]
+key: UdU9JhVqFz2QtygmODnUM8XU56WV3TBq3i-QsGy1dR4=
+input: input-short.txt
+mode: encrypt           ;encrypt or decrypt
+blocksize: 47           ;generates a 140 characters string for twitter
+offset: 0
+send_to_twitter: False  ;True or False
+
+[Twitter]
+twitter_account = cryptoradio
+twitter_auth_token = xxx
