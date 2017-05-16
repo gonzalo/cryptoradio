@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 #IMPORT
-import sys, argparse, ConfigParser
+import sys, argparse, ConfigParser, time, twitter
 from cryptography.fernet import Fernet
 
    #
@@ -40,6 +40,18 @@ def RunEncryption(config, args):
     blocksize = config.getint("Encryption","blocksize")
     offset = config.getint("Encryption","offset")
 
+
+    if config.getboolean("Twitter","send_to_twitter"):
+        twitter_flag = True
+        interval = config.getint("Twitter","interval")
+        twitter_api = twitter.Api(
+                      consumer_key=config.get("Twitter","consumer_key"),
+                      consumer_secret=config.get("Twitter","consumer_secret"),
+                      access_token_key=config.get("Twitter","access_token_key"),
+                      access_token_secret=config.get("Twitter","access_token_secret"),
+                      sleep_on_rate_limit=True)
+
+
     cryptomachine = Fernet(key)
 
     with open(inputfile, 'r') as file:
@@ -50,6 +62,18 @@ def RunEncryption(config, args):
             encToken = cryptomachine.encrypt(token)
             if args.verbose:
                 print encToken
+            if twitter_flag:
+                try:
+                    twitter_api.PostUpdate(encToken)
+                    time.sleep(interval)
+                except:
+                    print "Unable to post to twitter"
+                    exit(1)
+
+            #here I should wait
+            time.sleep(60)
+
+
 
 def RunDecryption(config):
     print "TODO"

@@ -1,0 +1,18 @@
+[Encryption]
+key:                    ; generate with
+                        ; https://cryptography.io/en/latest/fernet/ instructions
+input: xxx.txt          ; input file
+mode: encrypt           ; encrypt or decrypt
+blocksize: 47           ; generates a 140 characters string for twitter
+offset: 0               ; start enconding from blocksize*offset char
+
+[Twitter]
+send_to_twitter: True   ; True or False
+interval= 60            ; in seconds
+
+; create keys and tokens
+; https://dev.twitter.com/oauth/overview/application-owner-access-tokens
+consumer_key=[consumer_key]
+consumer_secret=[consumer_secret]
+access_token_key=[access_token_key]
+access_token_secret=[access_token_secret]

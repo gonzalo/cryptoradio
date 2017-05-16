@@ -1,11 +1,18 @@
 [Encryption]
-key: UdU9JhVqFz2QtygmODnUM8XU56WV3TBq3i-QsGy1dR4=
+key:
 input: input-short.txt
 mode: encrypt           ;encrypt or decrypt
 blocksize: 47           ;generates a 140 characters string for twitter
 offset: 0
-send_to_twitter: False  ;True or False
 
 [Twitter]
-twitter_account = cryptoradio
-twitter_auth_token = xxx
+send_to_twitter: True  ;True or False
+
+;how to create keys and tokens
+;https://dev.twitter.com/oauth/overview/application-owner-access-tokens
+consumer_key=L8bjBlm1Ic1mXRQf9Bti41oot
+consumer_secret=SpleoSNa74E8jdlUBQG4na1scRLYNKBv5umJ2a0L8K1ahNfb3H
+access_token_key=864479402268209152-XvwrfmyHEa5tT450dz8xyFNedsBPIpb
+access_token_secret=yrAaMNx939zDpp3uApSm46G6croFmV66YBG7ZGJiowm5j
+
+interval= 60        ;in seconds
