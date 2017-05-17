@@ -6,8 +6,8 @@ blocksize: 47           ; generates a 140 characters string for twitter
 offset: 0               ; start enconding from blocksize*offset char
 
 [Twitter]
-send_to_twitter: True   ; True or False
-interval= 60            ; in seconds
+send_to_twitter: False  ; True or False
+interval= 60            ; in seconds. Twitter allows 2400 twetts per day
 
 ; create keys and tokens
 ; https://dev.twitter.com/oauth/overview/application-owner-access-tokens

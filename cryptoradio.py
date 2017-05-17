@@ -90,10 +90,7 @@ if __name__ == "__main__":
     #parse arguments
     parser = argparse.ArgumentParser(description='Crytoradio script.')
     parser.add_argument('config_file', help='Config file')
-    parser.add_argument('-v',"--verbose", help="increase output verbosity",
-                        action="store_true")
-    parser.add_argument("--generate_key",
-                        help="Generate encryption/decryption key",
+    parser.add_argument('-v',"--verbose", help="Display operations on screen",
                         action="store_true")
 
     args = parser.parse_args()

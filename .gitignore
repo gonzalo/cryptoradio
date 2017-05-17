@@ -1,4 +1,4 @@
 
 *.txt
-.config
-.config_alt
+.config_enc
+.config_dec
