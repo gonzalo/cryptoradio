@@ -41,7 +41,8 @@ optional arguments:
 
 #### Security advices
 **Protect your .config_enc and .config_dec files!!! They both store password**
-``chmod 600 .config_enc .config_dec
+
+``$chmod 600 .config_enc .config_dec``
 
 
 ### Release Notes

@@ -17,9 +17,28 @@ def get_key(password):
 
 def TestConfig(config):
     try:
-        option = config.get("Encryption","password")
-        option = config.get("Encryption","input")
-        option = config.get("Encryption","mode")
+        option = config.get("General","password")
+        option = config.get("General","input")
+        mode = config.get("General","mode")
+
+        if mode == "encrypt":
+            option = config.getboolean("Encryption","keep_pagination")
+            option = config.getint("Encryption","blocksize")
+            option = config.getint("Encryption","offset")
+            option = config.getint("Encryption","interval")
+
+        if mode == "decrypt":
+            option = config.getboolean("Encryption","keep_pagination")
+            option = config.getint("Encryption","blocksize")
+            option = config.getint("Encryption","offset")
+            option = config.getint("Encryption","interval")
+
+        option = config.get("Twitter","send_to_twitter")
+        if option:
+            option = config.get("Twitter","consumer_key")
+            option = config.get("Twitter","consumer_secret")
+            option = config.get("Twitter","access_token_key")
+            option = config.get("Twitter","access_token_secret")
 
     except:
         print 'Error in config file'
@@ -27,16 +46,15 @@ def TestConfig(config):
 
 def RunEncryption(config, args):
 
-    key = get_key(config.get("Encryption","password"))
-    inputfile = config.get("Encryption","input")
+    key = get_key(config.get("General","password"))
+    inputfile = config.get("General","input")
     blocksize = config.getint("Encryption","blocksize")
     offset = config.getint("Encryption","offset")
-    interval = 1
+    interval = config.getint("Encryption","interval")
 
     twitter_flag = False
     if config.getboolean("Twitter","send_to_twitter"):
         twitter_flag = True
-        interval = config.getint("Twitter","interval")
         twitter_api = twitter.Api(
                       consumer_key=config.get("Twitter","consumer_key"),
                       consumer_secret=config.get("Twitter","consumer_secret"),
@@ -61,13 +79,18 @@ def RunEncryption(config, args):
                     print "Unable to post to twitter"
                     exit(1)
 
+            offset+=1
+            config.set("Encryption","offset", offset)
+            with open(args.config_file, 'wb') as configfile:
+                config.write(configfile)
+                configfile.close()
             time.sleep(interval)
 
 
 
 def RunDecryption(config,args):
-    key = get_key(config.get("Encryption","password"))
-    inputfile = config.get("Encryption","input")
+    key = get_key(config.get("General","password"))
+    inputfile = config.get("General","input")
 
     cryptomachine = Fernet(key)
 
@@ -85,25 +108,23 @@ def RunDecryption(config,args):
 
 if __name__ == "__main__":
 
+    #catch Ctrl + C 
     signal.signal(signal.SIGINT, signal_handler)
 
     #parse arguments
-    parser = argparse.ArgumentParser(description='Crytoradio script.')
+    parser = argparse.ArgumentParser(description='Crytoradio python script. Encode and post to Twitter')
     parser.add_argument('config_file', help='Config file')
     parser.add_argument('-v',"--verbose", help="Display operations on screen",
                         action="store_true")
 
     args = parser.parse_args()
 
-    if args.generate_key:
-        generate_key()
-
     config = ConfigParser.ConfigParser()
     if config.read(args.config_file):
         TestConfig(config);
-        if config.get("Encryption","mode") == "encrypt":
+        if config.get("General","mode") == "encrypt":
             RunEncryption(config,args)
-        elif config.get("Encryption","mode") == "decrypt":
+        elif config.get("General","mode") == "decrypt":
             RunDecryption(config,args)
         else:
             print "Unexpected mode of operation. Check config file"

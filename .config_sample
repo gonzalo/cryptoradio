@@ -1,13 +1,16 @@
-[Encryption]
-password:               ; password string
+[General]
+password: 12345678      ; password string
 input: xxx.txt          ; input file
 mode: encrypt           ; encrypt or decrypt
+
+[Encryption]
+keep_pagination: True   ; resume encryption from last execution (modifies offset)
 blocksize: 47           ; generates a 140 characters string for twitter
 offset: 0               ; start enconding from blocksize*offset char
+interval= 60            ; in seconds. Twitter allows 2400 twetts per day
 
 [Twitter]
 send_to_twitter: False  ; True or False
-interval= 60            ; in seconds. Twitter allows 2400 twetts per day
 
 ; create keys and tokens
 ; https://dev.twitter.com/oauth/overview/application-owner-access-tokens
