@@ -4,31 +4,14 @@
 import sys, argparse, ConfigParser, time, twitter, signal
 from cryptography.fernet import Fernet
 
-   #
-   # #CONSTS
-   # key="UdU9JhVqFz2QtygmODnUM8XU56WV3TBq3i-QsGy1dR4="
-   # inputfile="input.txt"
-   # blocksize=47
-   # offset=0
-   # screenflag=0
-   #
-   #
-   # #start encrypt
-   # cryptomachine = Fernet(key)
-   # with open(inputfile, 'r') as file:
-   #    file.seek(blocksize*offset,0)
-   #    while True:
-   #       token = file.read(blocksize)
-   #       if not token: break
-   #       encToken = cryptomachine.encrypt(token)
-   #       if screenflag:
-   #          print encToken
-   # file.close()
-
 def signal_handler(signal, frame):
-        print('Exiting...')
-        exit(0)
+    print('Exiting...')
+    exit(0)
 
+def generate_key():
+    print 'Use this key in config file =>' + Fernet.generate_key()
+    print 'Keep it safe!!!'
+    exit(0)
 
 def TestConfig(config):
     try:
@@ -37,6 +20,7 @@ def TestConfig(config):
 
     except:
         print 'Error in config file'
+        exit(1)
 
 def RunEncryption(config, args):
 
@@ -78,8 +62,23 @@ def RunEncryption(config, args):
 
 
 
-def RunDecryption(config):
-    print "TODO"
+def RunDecryption(config,args):
+    key = config.get("Encryption","key")
+    inputfile = config.get("Encryption","input")
+
+    cryptomachine = Fernet(key)
+
+    with open(inputfile, 'r') as file:
+        while True:
+            token = file.readline()
+            if not token: break
+            try:
+                decToken = cryptomachine.decrypt(token)
+            except:
+                print "Invalid input"
+                exit(1)
+            sys.stdout.write(decToken)
+
 
 if __name__ == "__main__":
 
@@ -90,8 +89,14 @@ if __name__ == "__main__":
     parser.add_argument('config_file', help='Config file')
     parser.add_argument('-v',"--verbose", help="increase output verbosity",
                         action="store_true")
+    parser.add_argument("--generate_key",
+                        help="Generate encryption/decryption key",
+                        action="store_true")
 
     args = parser.parse_args()
+
+    if args.generate_key:
+        generate_key()
 
     config = ConfigParser.ConfigParser()
     if config.read(args.config_file):
