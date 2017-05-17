@@ -1,22 +1,25 @@
 #!/usr/bin/python
 
 #IMPORT
-import sys, argparse, ConfigParser, time, twitter, signal
+import sys, argparse, ConfigParser, time, twitter, signal, base64
 from cryptography.fernet import Fernet
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.backends import default_backend
 
 def signal_handler(signal, frame):
-    print('Exiting...')
+    sys.stderr.write('Exiting...\n')
     exit(0)
 
-def generate_key():
-    print 'Use this key in config file =>' + Fernet.generate_key()
-    print 'Keep it safe!!!'
-    exit(0)
+def get_key(password):
+    digest = hashes.Hash(hashes.SHA256(), backend=default_backend())
+    digest.update(password)
+    return base64.urlsafe_b64encode(digest.finalize())
 
 def TestConfig(config):
     try:
-        option = config.get("Encryption","key")
+        option = config.get("Encryption","password")
         option = config.get("Encryption","input")
+        option = config.get("Encryption","mode")
 
     except:
         print 'Error in config file'
@@ -24,12 +27,13 @@ def TestConfig(config):
 
 def RunEncryption(config, args):
 
-    key = config.get("Encryption","key")
+    key = get_key(config.get("Encryption","password"))
     inputfile = config.get("Encryption","input")
     blocksize = config.getint("Encryption","blocksize")
     offset = config.getint("Encryption","offset")
+    interval = 1
 
-
+    twitter_flag = False
     if config.getboolean("Twitter","send_to_twitter"):
         twitter_flag = True
         interval = config.getint("Twitter","interval")
@@ -39,7 +43,6 @@ def RunEncryption(config, args):
                       access_token_key=config.get("Twitter","access_token_key"),
                       access_token_secret=config.get("Twitter","access_token_secret"),
                       sleep_on_rate_limit=True)
-
 
     cryptomachine = Fernet(key)
 
@@ -63,7 +66,7 @@ def RunEncryption(config, args):
 
 
 def RunDecryption(config,args):
-    key = config.get("Encryption","key")
+    key = get_key(config.get("Encryption","password"))
     inputfile = config.get("Encryption","input")
 
     cryptomachine = Fernet(key)
@@ -78,7 +81,7 @@ def RunDecryption(config,args):
                 print "Invalid input"
                 exit(1)
             sys.stdout.write(decToken)
-
+    print
 
 if __name__ == "__main__":
 

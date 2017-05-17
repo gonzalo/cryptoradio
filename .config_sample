@@ -1,6 +1,5 @@
 [Encryption]
-key:                    ; generate with
-                        ; https://cryptography.io/en/latest/fernet/ instructions
+password:               ; password string
 input: xxx.txt          ; input file
 mode: encrypt           ; encrypt or decrypt
 blocksize: 47           ; generates a 140 characters string for twitter
