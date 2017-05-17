@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 #IMPORT
-import sys, argparse, ConfigParser, time, twitter
+import sys, argparse, ConfigParser, time, twitter, signal
 from cryptography.fernet import Fernet
 
    #
@@ -24,6 +24,11 @@ from cryptography.fernet import Fernet
    #       if screenflag:
    #          print encToken
    # file.close()
+
+def signal_handler(signal, frame):
+        print('Exiting...')
+        exit(0)
+
 
 def TestConfig(config):
     try:
@@ -65,13 +70,11 @@ def RunEncryption(config, args):
             if twitter_flag:
                 try:
                     twitter_api.PostUpdate(encToken)
-                    time.sleep(interval)
-                except:
+                except twitter.error:
                     print "Unable to post to twitter"
                     exit(1)
 
-            #here I should wait
-            time.sleep(60)
+            time.sleep(interval)
 
 
 
@@ -79,6 +82,9 @@ def RunDecryption(config):
     print "TODO"
 
 if __name__ == "__main__":
+
+    signal.signal(signal.SIGINT, signal_handler)
+
     #parse arguments
     parser = argparse.ArgumentParser(description='Crytoradio script.')
     parser.add_argument('config_file', help='Config file')
