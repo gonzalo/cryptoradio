@@ -1,2 +1,4 @@
-input.txt
+
+*.txt
 .config
+.config_alt
